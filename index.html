@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #050505;
+            color: #f6f6f6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #050505;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px;
+        }
+
+        main {
+            width: min(520px, 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .counter {
+            margin: 0;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #8c8c8c;
+        }
+
+        .card {
+            width: 100%;
+            border-radius: 28px;
+            border: 1px solid #1b1b1b;
+            background: radial-gradient(circle at top, #131313, #050505 70%);
+            padding: 36px 24px;
+            min-height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: background 0.25s ease, border 0.25s ease, transform 0.2s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card:active {
+            transform: scale(0.99);
+        }
+
+        .card.is-answer {
+            background: radial-gradient(circle at top, #0f253d, #050505 70%);
+            border-color: #1f3c56;
+        }
+
+        .card-text {
+            margin: 0;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .hint {
+            margin: 0;
+            font-size: 0.78rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #555;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .card {
+                min-height: 260px;
+                padding: 28px 18px;
+            }
+
+            .card-text {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <p class="counter" id="counter">0 / 0</p>
+        <section class="card" id="card" tabindex="0" role="button" aria-label="Flashcard">
+            <p class="card-text" id="card-text">Loading…</p>
+        </section>
+        <p class="hint">tap to flip • swipe to move</p>
+    </main>
+    <script>
+        const cardEl = document.getElementById('card');
+        const cardTextEl = document.getElementById('card-text');
+        const counterEl = document.getElementById('counter');
+
+        let cards = [];
+        let index = 0;
+        let showingAnswer = false;
+        const pointer = { id: null, startX: 0, startY: 0 };
+
+        const sanitize = (value = '') => value.replace(/^"|"$/g, '').trim();
+
+        function parseCSV(text) {
+            const rows = [];
+            let field = '';
+            let row = [];
+            let insideQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const next = text[i + 1];
+
+                if (char === '"') {
+                    if (insideQuotes && next === '"') {
+                        field += '"';
+                        i++;
+                    } else {
+                        insideQuotes = !insideQuotes;
+                    }
+                } else if (char === ',' && !insideQuotes) {
+                    row.push(field);
+                    field = '';
+                } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+                    if (field.length || row.length) {
+                        row.push(field);
+                        rows.push(row);
+                        row = [];
+                        field = '';
+                    }
+                    if (char === '\r' && next === '\n') {
+                        i++;
+                    }
+                } else {
+                    field += char;
+                }
+            }
+
+            if (field.length || row.length) {
+                row.push(field);
+                rows.push(row);
+            }
+
+            return rows
+                .map(([question = '', answer = '']) => ({
+                    question: sanitize(question),
+                    answer: sanitize(answer)
+                }))
+                .filter(card => card.question && card.answer);
+        }
+
+        function renderCard() {
+            if (!cards.length) {
+                cardTextEl.textContent = 'No cards found.';
+                counterEl.textContent = '0 / 0';
+                cardEl.classList.remove('is-answer');
+                return;
+            }
+
+            const current = cards[index];
+            cardTextEl.textContent = showingAnswer ? current.answer : current.question;
+            counterEl.textContent = `${index + 1} / ${cards.length}`;
+            cardEl.classList.toggle('is-answer', showingAnswer);
+            cardEl.dataset.side = showingAnswer ? 'answer' : 'question';
+        }
+
+        function nextCard() {
+            if (!cards.length) return;
+            index = (index + 1) % cards.length;
+            showingAnswer = false;
+            renderCard();
+        }
+
+        function prevCard() {
+            if (!cards.length) return;
+            index = (index - 1 + cards.length) % cards.length;
+            showingAnswer = false;
+            renderCard();
+        }
+
+        function toggleSide() {
+            if (!cards.length) return;
+            showingAnswer = !showingAnswer;
+            renderCard();
+        }
+
+        function handlePointerDown(event) {
+            if (event.pointerType === 'mouse' && event.button !== 0) return;
+            pointer.id = event.pointerId;
+            pointer.startX = event.clientX;
+            pointer.startY = event.clientY;
+            cardEl.setPointerCapture(event.pointerId);
+        }
+
+        function handlePointerUp(event) {
+            if (pointer.id !== event.pointerId) return;
+            cardEl.releasePointerCapture(event.pointerId);
+            const diffX = event.clientX - pointer.startX;
+            const diffY = event.clientY - pointer.startY;
+            pointer.id = null;
+
+            if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX < 0) {
+                    nextCard();
+                } else {
+                    prevCard();
+                }
+                return;
+            }
+
+            toggleSide();
+        }
+
+        function handlePointerCancel(event) {
+            if (pointer.id !== event.pointerId) return;
+            cardEl.releasePointerCapture(event.pointerId);
+            pointer.id = null;
+        }
+
+        function handleKey(event) {
+            if (!cards.length) return;
+            if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                nextCard();
+            } else if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                prevCard();
+            } else if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                toggleSide();
+            }
+        }
+
+        cardEl.addEventListener('pointerdown', handlePointerDown);
+        cardEl.addEventListener('pointerup', handlePointerUp);
+        cardEl.addEventListener('pointercancel', handlePointerCancel);
+        cardEl.addEventListener('keydown', handleKey);
+
+        async function init() {
+            try {
+                const response = await fetch('flashcards.csv');
+                if (!response.ok) {
+                    throw new Error('Unable to load cards');
+                }
+                const text = await response.text();
+                cards = parseCSV(text);
+                if (!cards.length) {
+                    renderCard();
+                    return;
+                }
+                index = 0;
+                showingAnswer = false;
+                renderCard();
+            } catch (err) {
+                cardTextEl.textContent = err.message;
+                counterEl.textContent = '0 / 0';
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
