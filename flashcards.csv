@@ -1,0 +1,33 @@
+What is the formula to calculate Contribution per unit?,"Contribution is calculated as Selling Price (SP) minus Variable Cost (VC) per unit, or $SP - VC$."
+What is the formula for the Break-Even Point (BEP) in Units?,"The formula is Fixed Costs (FC) divided by Contribution per unit, or $FC \div Contribution$."
+How do you calculate the Break-Even Point (BEP) in Sales value?,"It is calculated by multiplying the Break-Even Point in Units by the Selling Price (SP), or $BEP Units \times SP$."
+What is the formula to calculate the overall Profit or Loss from a given number of units sold?,The formula is $(Units \times Contribution) - Fixed Costs (FC)$.
+How do you calculate the number of units required to achieve a target profit?,The formula is $(Fixed Costs + Target Profit) \div Contribution$ per unit.
+Define the Break-Even Point (BEP).,"The Break-Even Point is the level of sales at which total revenue equals total costs, resulting in zero profit."
+State a key purpose of calculating the Break-Even Point.,"It helps in business planning, cost control, pricing decisions, and determining the minimum sales level for survival."
+"In CVP analysis, what does 'Contribution' represent?","It is the amount remaining from sales revenue after variable costs have been deducted, used to cover fixed costs and then generate profit."
+Concept: Margin of Safety,"Definition: The difference between actual or budgeted sales and the break-even sales, which indicates the level of risk."
+What does the Profit/Volume (P/V) Ratio indicate?,The P/V Ratio is a measure of profitability that shows how much contribution is earned from each pound of sales.
+What is the formula for the Profit/Volume (P/V) Ratio?,The formula is $(Contribution \div Sales) \times 100$.
+A core assumption of CVP analysis is that the _____ per unit remains constant.,Selling Price (SP)
+CVP analysis assumes that the variable cost per unit and total _____ costs remain constant within a relevant range.,fixed
+What assumption does CVP analysis make regarding production and sales volumes?,"It assumes that the volume of sales is equal to the volume of production, meaning there is no change in inventory levels."
+What is a 'Break-Even Chart' used for?,"It is a graph that visually represents total revenue, total costs, and the break-even point."
+What does 'Target Profit' analysis determine?,"It determines the sales volume required to achieve a specific, desired level of profit."
+A _____ is a budget designed to adjust or flex for changes in the volume of activity.,Flexible Budget
+How does a flexible budget differ from a fixed budget?,"A fixed budget is prepared for a single level of activity, whereas a flexible budget can be adjusted for multiple activity levels."
+Define a 'semi-variable cost'.,A semi-variable cost is a cost that contains both a fixed component and a variable component.
+State a key advantage of using flexible budgeting.,It provides better control over costs and allows for more realistic performance comparisons against actual results.
+What is a 'Cash Budget'?,A cash budget is a detailed statement of a business's expected cash inflows (receipts) and outflows (payments) over a future period.
+What is the primary formula used to determine the outcome of a cash budget?,"The outcome is the Cash Surplus or Deficit, calculated as Total Cash Inflows minus Total Cash Outflows."
+State one key objective of preparing a cash budget.,"Objectives include maintaining adequate liquidity, avoiding cash shortages, and planning for future borrowing or investment."
+What is the key difference between a Cash Budget and a Cash Flow Statement?,"A cash budget is a forecast of future cash movements, while a cash flow statement reports on cash movements that have already occurred."
+"In the context of production decisions, what is a 'Limiting Factor'?","A limiting factor is a scarce resource, such as labour hours or raw materials, that restricts a company's production capacity."
+What is the decision rule for selecting the optimal product mix when a limiting factor exists?,The optimal mix is found by ranking products based on their 'Contribution per unit of Limiting Factor' and prioritising the highest-ranking ones.
+Why are fixed costs typically ignored when making short-term product mix decisions with a limiting factor?,"Fixed costs are ignored because they are assumed to be unaffected by the production mix chosen; therefore, maximising contribution is the key objective."
+How do you calculate the 'Contribution per kg' when raw material is a limiting factor?,You divide the contribution per unit of the product by the kilograms (Kg) of material required to make one unit.
+What is the primary financial basis for a 'Shutdown Decision'?,The decision is based on whether a product or segment is making a positive contribution towards covering the business's fixed costs.
+"In shutdown decisions, why is 'Contribution' a more important metric than 'Profit'?","Contribution reveals a product's direct ability to cover its own variable costs and contribute to fixed costs, which profit figures can obscure."
+Define 'Avoidable Costs' in the context of a discontinuation decision.,Avoidable costs are those costs that would be saved or completely eliminated if a product or operation is discontinued.
+Define 'Unavoidable Costs' in the context of a discontinuation decision.,"Unavoidable costs, typically fixed costs, are those that will continue to be incurred even if a specific product or operation is stopped."
+Under what condition might a company continue to produce a product that shows a low profit?,A low-profit product may be continued if it generates a positive contribution or utilises spare capacity that would otherwise be idle.
