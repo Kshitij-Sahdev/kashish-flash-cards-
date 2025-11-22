@@ -8,8 +8,15 @@
         :root {
             color-scheme: dark;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background-color: #050505;
+            background-color: #030303;
             color: #f6f6f6;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+            --accent: #5dd6ff;
+            --accent-soft: rgba(93, 214, 255, 0.25);
+            --text-dim: #9e9e9e;
+            --card-radius: 28px;
+            --progress: 0%;
         }
 
         * {
@@ -19,12 +26,26 @@
         body {
             margin: 0;
             min-height: 100vh;
-            background: #050505;
+            background: radial-gradient(circle at 20% 20%, rgba(93, 214, 255, 0.2), transparent 55%),
+                radial-gradient(circle at 80% 0%, rgba(155, 111, 255, 0.18), transparent 50%),
+                #050505;
             color: inherit;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 32px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.04), transparent 60%);
+            filter: blur(120px);
+            opacity: 0.7;
+            pointer-events: none;
         }
 
         main {
@@ -33,6 +54,8 @@
             flex-direction: column;
             align-items: center;
             gap: 16px;
+            position: relative;
+            z-index: 1;
         }
 
         .counter {
@@ -40,14 +63,26 @@
             font-size: 0.75rem;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: #8c8c8c;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .counter::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent);
         }
 
         .card {
             width: 100%;
-            border-radius: 28px;
-            border: 1px solid #1b1b1b;
-            background: radial-gradient(circle at top, #131313, #050505 70%);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--card-border);
+            background: radial-gradient(circle at top, rgba(12, 12, 12, 0.95), rgba(4, 4, 4, 0.92) 70%);
             padding: 36px 24px;
             min-height: 320px;
             display: flex;
@@ -58,6 +93,11 @@
             cursor: pointer;
             user-select: none;
             touch-action: pan-y;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(6px);
+            transform-style: preserve-3d;
         }
 
         .card:active {
@@ -65,15 +105,29 @@
         }
 
         .card.is-answer {
-            background: radial-gradient(circle at top, #0f253d, #050505 70%);
-            border-color: #1f3c56;
+            background: radial-gradient(circle at top, rgba(15, 37, 61, 0.92), rgba(5, 5, 5, 0.92) 70%);
+            border-color: rgba(93, 214, 255, 0.4);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: calc(var(--card-radius) - 6px);
+            background: linear-gradient(130deg, rgba(255, 255, 255, 0.1), transparent 45%);
+            opacity: 0.2;
+            pointer-events: none;
         }
 
         .card-text {
             margin: 0;
-            font-size: 1.15rem;
-            line-height: 1.6;
+            font-size: 1.18rem;
+            line-height: 1.65;
             white-space: pre-line;
+        }
+
+        .card[data-side="answer"] .card-text {
+            color: #eaf8ff;
         }
 
         .hint {
@@ -81,7 +135,140 @@
             font-size: 0.78rem;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            color: #555;
+            color: #666;
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            width: 100%;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .control-btn {
+            flex: 1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.05);
+            color: inherit;
+            font: inherit;
+            padding: 12px 18px;
+            cursor: pointer;
+            transition: border 0.2s ease, background 0.2s ease, transform 0.2s ease;
+        }
+
+        .control-btn:hover,
+        .control-btn:focus-visible {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            outline: none;
+        }
+
+        .control-btn:active {
+            transform: translateY(1px);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: var(--progress);
+            height: 100%;
+            background: linear-gradient(90deg, #5dd6ff, #8f7aff);
+            border-radius: inherit;
+            transition: width 0.25s ease;
+        }
+
+        .card.flipping[data-motion="forward"] {
+            animation: flipForward 0.45s ease;
+        }
+
+        .card.flipping[data-motion="back"] {
+            animation: flipBack 0.45s ease;
+        }
+
+        .card.is-swiping-left {
+            animation: swipeLeft 0.45s ease;
+        }
+
+        .card.is-swiping-right {
+            animation: swipeRight 0.45s ease;
+        }
+
+        @keyframes flipForward {
+            0% {
+                transform: perspective(900px) rotateY(0deg);
+            }
+            50% {
+                transform: perspective(900px) rotateY(14deg) scale(0.97);
+            }
+            100% {
+                transform: perspective(900px) rotateY(0deg);
+            }
+        }
+
+        @keyframes flipBack {
+            0% {
+                transform: perspective(900px) rotateY(0deg);
+            }
+            50% {
+                transform: perspective(900px) rotateY(-14deg) scale(0.97);
+            }
+            100% {
+                transform: perspective(900px) rotateY(0deg);
+            }
+        }
+
+        @keyframes swipeLeft {
+            0% {
+                transform: translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+            45% {
+                transform: translateX(-80px) rotate(-3deg);
+                opacity: 0;
+            }
+            55% {
+                transform: translateX(90px) rotate(2deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes swipeRight {
+            0% {
+                transform: translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+            45% {
+                transform: translateX(80px) rotate(3deg);
+                opacity: 0;
+            }
+            55% {
+                transform: translateX(-90px) rotate(-2deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card,
+            .progress-bar {
+                transition: none;
+                animation: none !important;
+            }
         }
 
         @media (max-width: 600px) {
@@ -97,21 +284,38 @@
             .card-text {
                 font-size: 1.05rem;
             }
+
+            .controls {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <main>
         <p class="counter" id="counter">0 / 0</p>
+        <div class="progress-track" aria-hidden="true">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
         <section class="card" id="card" tabindex="0" role="button" aria-label="Flashcard">
             <p class="card-text" id="card-text">Loading…</p>
         </section>
-        <p class="hint">tap to flip • swipe to move</p>
+        <div class="controls" aria-label="Flashcard controls">
+            <button type="button" class="control-btn" id="prev-btn" aria-label="Previous card">Prev</button>
+            <button type="button" class="control-btn" id="flip-btn" aria-label="Flip card">Flip</button>
+            <button type="button" class="control-btn" id="next-btn" aria-label="Next card">Next</button>
+        </div>
+        <p class="hint">tap or press flip • swipe or use buttons to move</p>
     </main>
     <script>
+        const root = document.documentElement;
         const cardEl = document.getElementById('card');
         const cardTextEl = document.getElementById('card-text');
         const counterEl = document.getElementById('counter');
+        const progressBarEl = document.getElementById('progress-bar');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const flipBtn = document.getElementById('flip-btn');
 
         let cards = [];
         let index = 0;
@@ -168,11 +372,19 @@
                 .filter(card => card.question && card.answer);
         }
 
+        function setProgress(value) {
+            if (!progressBarEl) return;
+            const clamped = Math.min(Math.max(value, 0), 100);
+            progressBarEl.style.width = `${clamped}%`;
+            root.style.setProperty('--progress', `${clamped}%`);
+        }
+
         function renderCard() {
             if (!cards.length) {
                 cardTextEl.textContent = 'No cards found.';
                 counterEl.textContent = '0 / 0';
                 cardEl.classList.remove('is-answer');
+                setProgress(0);
                 return;
             }
 
@@ -181,12 +393,28 @@
             counterEl.textContent = `${index + 1} / ${cards.length}`;
             cardEl.classList.toggle('is-answer', showingAnswer);
             cardEl.dataset.side = showingAnswer ? 'answer' : 'question';
+            setProgress(((index + 1) / cards.length) * 100);
+        }
+
+        function playSwipeAnimation(direction) {
+            const className = direction === 'next' ? 'is-swiping-left' : 'is-swiping-right';
+            cardEl.classList.remove('is-swiping-left', 'is-swiping-right');
+            void cardEl.offsetWidth;
+            cardEl.classList.add(className);
+        }
+
+        function playFlipAnimation(direction) {
+            cardEl.classList.remove('flipping');
+            void cardEl.offsetWidth;
+            cardEl.dataset.motion = direction;
+            cardEl.classList.add('flipping');
         }
 
         function nextCard() {
             if (!cards.length) return;
             index = (index + 1) % cards.length;
             showingAnswer = false;
+            playSwipeAnimation('next');
             renderCard();
         }
 
@@ -194,12 +422,14 @@
             if (!cards.length) return;
             index = (index - 1 + cards.length) % cards.length;
             showingAnswer = false;
+            playSwipeAnimation('prev');
             renderCard();
         }
 
         function toggleSide() {
             if (!cards.length) return;
             showingAnswer = !showingAnswer;
+            playFlipAnimation(showingAnswer ? 'forward' : 'back');
             renderCard();
         }
 
@@ -250,10 +480,24 @@
             }
         }
 
+        function handleAnimationEnd(event) {
+            if (event.animationName === 'flipForward' || event.animationName === 'flipBack') {
+                cardEl.classList.remove('flipping');
+                cardEl.removeAttribute('data-motion');
+            }
+            if (event.animationName === 'swipeLeft' || event.animationName === 'swipeRight') {
+                cardEl.classList.remove('is-swiping-left', 'is-swiping-right');
+            }
+        }
+
         cardEl.addEventListener('pointerdown', handlePointerDown);
         cardEl.addEventListener('pointerup', handlePointerUp);
         cardEl.addEventListener('pointercancel', handlePointerCancel);
         cardEl.addEventListener('keydown', handleKey);
+        cardEl.addEventListener('animationend', handleAnimationEnd);
+        prevBtn?.addEventListener('click', prevCard);
+        nextBtn?.addEventListener('click', nextCard);
+        flipBtn?.addEventListener('click', toggleSide);
 
         async function init() {
             try {
